@@ -84,7 +84,8 @@
       })
       .catch(err => {
         result.textContent = "Error: " + err.message;
-      })
+        console.error("Detailed error:", err);
+      });
       .finally(() => {
         loader.classList.add("hidden");
       });
