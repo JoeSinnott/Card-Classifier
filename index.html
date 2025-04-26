@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Classifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center px-4">
+
+  <div class="w-full max-w-md space-y-6">
+    <h1 class="text-3xl font-bold text-center">🃏 Playing Card Classifier</h1>
+
+    <!-- Image preview -->
+    <div id="preview-container" class="w-full aspect-video bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
+      <img id="preview" src="" alt="Uploaded image preview" class="max-h-full max-w-full hidden" />
+      <span id="placeholder" class="text-gray-500">Image preview</span>
+    </div>
+
+    <!-- Upload Form -->
+    <form id="uploadForm" class="space-y-4" enctype="multipart/form-data">
+      <input type="file" name="file" id="fileInput"
+             class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0 file:text-sm file:font-semibold
+                    file:bg-indigo-600 file:text-white hover:file:bg-indigo-500
+                    transition duration-300"
+             accept="image/*" required />
+
+      <button type="submit"
+              class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-semibold transition duration-300">
+        Predict
+      </button>
+    </form>
+
+    <!-- Loader -->
+    <div id="loader" class="flex justify-center hidden">
+      <svg class="animate-spin h-8 w-8 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v8z" />
+      </svg>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="text-center text-xl font-medium mt-4"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const result = document.getElementById("result");
+    const loader = document.getElementById("loader");
+    const preview = document.getElementById("preview");
+    const placeholder = document.getElementById("placeholder");
+    const fileInput = document.getElementById("fileInput");
+
+    fileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.classList.remove("hidden");
+          placeholder.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      // Reset UI
+      result.textContent = "";
+      loader.classList.remove("hidden");
+
+      fetch("https://playing-card-api-production.up.railway.app/predict", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        result.textContent = "Prediction: " + data.prediction;
+      })
+      .catch(err => {
+        result.textContent = "Error: " + err.message;
+      })
+      .finally(() => {
+        loader.classList.add("hidden");
+      });
+    });
+  </script>
+
+</body>
+</html>
