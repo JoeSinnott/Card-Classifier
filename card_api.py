@@ -21,7 +21,7 @@ class SimpleCardClassifier(torch.nn.Module):
 
 # Flask setup
 app = Flask(__name__)
-CORS(app, origins=["https://joesinnott.github.io/Card-Classifier/"])  # Allow your frontend URL
+CORS(app, origins=["https://joesinnott.github.io"])  # Allow your frontend URL
 
 # Load model
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
