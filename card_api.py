@@ -64,4 +64,4 @@ def predict():
 
 # Run the API
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
