@@ -11,7 +11,7 @@ from flask_cors import CORS
 class SimpleCardClassifier(torch.nn.Module):
     def __init__(self, num_classes=53):
         super().__init__()
-        self.base_model = timm.create_model("efficientnet_b0", pretrained=True)
+        self.base_model = timm.create_model("efficientnet_b0", pretrained=False)
         self.features = torch.nn.Sequential(*list(self.base_model.children())[:-1])
         self.classifier = torch.nn.Linear(1280, num_classes)
 
@@ -23,9 +23,9 @@ class SimpleCardClassifier(torch.nn.Module):
 app = Flask(__name__)
 CORS(app, origins=["http://127.0.0.1:3000"])  # Allow your frontend URL
 
-
 # Load model
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Device: ", device)
 model = SimpleCardClassifier()
 model.load_state_dict(torch.load("model_weights.pth", map_location=device, weights_only=True))  # path to trained weights
 model.to(device)
