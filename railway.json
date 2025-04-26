@@ -7,7 +7,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "python card_api.py",
+    "startCommand": "gunicorn card_api:app --bind 0.0.0.0:$PORT",
     "sleepApplication": false,
     "multiRegionConfig": {
       "asia-southeast1-eqsg3a": {
